@@ -635,7 +635,7 @@ local function get_max_lots(pos, player)
         max = max + 1
     end
 
-    return max
+    return math.max(0, max -1)
 end
 
 local function make_purchase(pos, player, lots)
