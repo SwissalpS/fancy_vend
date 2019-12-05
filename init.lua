@@ -1497,7 +1497,10 @@ minetest.register_tool("fancy_vend:copy_tool",{
         local meta = itemstack:get_meta()
         local node_meta = minetest.get_meta(pos)
         local new_settings = minetest.deserialize(meta:get_string("settings"))
-
+        if not new_settings then
+            minetest.chat_send_player(user:get_player_name(), "No settings to set with. Right-click first on the vendor you want to copy settings from.")
+            return
+        end
         if can_modify_vendor(pos, user) then
             -- Admin vendor priv check
             if not minetest.check_player_privs(node_meta:get_string("owner"), {admin_vendor=true}) and new_settings.admin_vendor == true then
