@@ -1477,7 +1477,7 @@ end
 
 minetest.register_tool("fancy_vend:copy_tool",{
     inventory_image = "copier.png",
-    description = "Geminio Wand (For copying vendor settings, right click to save settings, left click to set settings.)",
+    description = "Geminio Wand (For copying vendor settings, right click to copy settings, left click to paste settings.)",
     stack_max = 1,
     on_place = function(itemstack, placer, pointed_thing)
         local pos, settings = get_vendor_pos_and_settings(pointed_thing)
