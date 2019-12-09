@@ -24,6 +24,7 @@ local drop_vendor = "fancy_vend:player_vendor"
 -- Register a copy of the display node with no drops to make players separating the obsidian glass with something like a piston a non-issue.
 local display_node_def = table.copy(minetest.registered_nodes[display_node])
 display_node_def.drop = ""
+display_node_def.pointable = false
 display_node_def.groups.not_in_creative_inventory = 1
 display_node_def.description = "Fancy Vendor Display Node (you hacker you!)"
 if pipeworks then
@@ -221,19 +222,17 @@ local function update_item(pos, node)
     end
 end
 
--- ABM to refresh entities after clearobjects
-minetest.register_abm({
+-- LBM to refresh entities after clearobjects
+minetest.register_lbm({
+    label = "Refresh vendor display",
+    name = "fancy_vend:display_refresh",
     nodenames = {"fancy_vend:display_node"},
-    interval = 60,
-    chance = 1,
-    action = function(pos, node, active_object_count, active_object_count_wider)
-        local num
-
-        num = #minetest.get_objects_inside_radius(pos, 0.5)
-        pos.y = pos.y - 1
-
-        if num > 0 then return end
-        update_item(pos, node)
+    run_at_every_load = true,
+    action = function(pos, node)
+        if not next(minetest.get_objects_inside_radius(pos, 0.5)) then
+            pos.y = pos.y - 1
+            update_item(pos, node)
+        end
     end
 })
 
@@ -393,23 +392,38 @@ end
 
 local function inv_insert(inv, listname, itemstack, quantity, from_table, pos, input_eject)
     local stackmax = itemstack:get_stack_max()
+    local name = itemstack:get_name()
     local stacks = {}
     local remaining_quantity = quantity
 
     -- Add the full stacks to the list
     while remaining_quantity > stackmax do
-        table.insert(stacks, {name = itemstack:get_name(), count = stackmax})
+        table.insert(stacks, {name = name, count = stackmax})
         remaining_quantity = remaining_quantity - stackmax
     end
     -- Add the remaining stack to the list
-    table.insert(stacks, {name = itemstack:get_name(), count = remaining_quantity})
+    table.insert(stacks, {name = name, count = remaining_quantity})
 
-    -- If tool add wears and metadatas, ignores if from_table = nil (eg, due to vendor beig admin vendor)
-    if minetest.registered_tools[itemstack:get_name()] and from_table then
+   -- If tool add wears ignores if from_table = nil (eg, due to vendor beig admin vendor)
+    if minetest.registered_tools[name] and from_table then
         for i in pairs(stacks) do
             local from_item_table = from_table[i].item:to_table()
             stacks[i].wear = from_item_table.wear
-            stacks[i].metadata = from_item_table.metadata
+        end
+    end
+
+    -- if has metadata add metadata
+    if from_table then
+        for i in pairs(stacks) do
+            local from_item_table = from_table[i].item:to_table()
+            if from_item_table.name == name then
+                if from_item_table.metadata then
+                    stacks[i].metadata = from_item_table.metadata -- Apparently some mods *cough* digtron *cough* do use deprecated metadata strings
+                end
+                if from_item_table.meta then
+                    stacks[i].meta = from_item_table.meta -- Most mods use metadata tables which is the correct method but ok
+                end
+            end
         end
     end
 
@@ -534,9 +548,19 @@ local function alert_owner_if_empty(pos)
     if not alerted and not status and errorcode == "no_output" then
         -- Rubenwardy's Email Mod: https://github.com/rubenwardy/email
         if mail_loaded then
-            -- cheapie's mail mod https://cheapiesystems.com/git/mail/
-            if not mail.messages[owner] then mail.messages[owner] = {} end
-            local inbox = mail.messages[owner]
+            local inbox = {}
+
+            -- load messages
+            if not mail.apiversion then
+              -- cheapie's mail mod https://cheapiesystems.com/git/mail/
+              if not mail.messages[owner] then mail.messages[owner] = {} end
+              inbox = mail.messages[owner]
+
+            elseif mail.apiversion >= 1.1 then
+              -- webmail fork https://github.com/thomasrudin-mt/mail (per player storage)
+              inbox = mail.getMessages(owner)
+
+            end
 
             -- Instead of filling their inbox with mail, get the last message sent by "Fancy Vend" and append to the message
             -- If there is no last message, then create a new one
@@ -558,7 +582,16 @@ local function alert_owner_if_empty(pos)
                 mail.send("Fancy Vend", owner, "You have unstocked vendors!", stock_msg.."\n")
             end
 
-            mail.save()
+            -- save messages
+            if not mail.apiversion then
+              -- cheapie's mail mod https://cheapiesystems.com/git/mail/
+              mail.save()
+
+            elseif mail.apiversion >= 1.1 then
+              -- webmail fork https://github.com/thomasrudin-mt/mail
+              mail.setMessages(owner, inbox)
+
+            end
 
             meta:set_string("alerted", "true")
 
@@ -1002,6 +1035,11 @@ local function refresh_vendor(pos)
         if meta:get_string("item") ~= "fancy_vend:inactive" then
             meta:set_string("item", "fancy_vend:inactive")
             update_item(pos, node)
+        end
+
+        if not alerted and not status and errorcode == "no_room" then
+            minetest.chat_send_player(meta:get_string("owner"), "[Fancy_Vend]: Error with vendor at "..minetest.pos_to_string(pos, 0)..": does not have room for payment.")
+            meta:set_string("alerted", "true")
         end
     end
 
