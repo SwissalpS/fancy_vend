@@ -649,7 +649,7 @@ local function get_max_lots(pos, player)
         max = max + 1
     end
 
-    return max
+    return math.max(0, max -1)
 end
 
 local function make_purchase(pos, player, lots)
@@ -1132,8 +1132,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
     if fields.buy then
         local lots = math.floor(tonumber(fields.lot_count) or 1)
-	-- prevent negative numbers
-	lots = math.max(lots, 1)
+        -- prevent negative numbers
+        lots = math.max(lots, 1)
         local success, message = make_purchase(pos, player, lots)
         if success then
             -- Add to vendor logs
