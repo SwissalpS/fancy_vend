@@ -633,6 +633,8 @@ local function run_inv_checks(pos, player, lots)
     ct.player_fits = free_slots(player_inv, "main", settings.output_item, output_qty)
     ct.vendor_fits = free_slots(inv, "main", settings.input_item, input_qty)
 
+    if settings.admin_vendor then ct.vendor_has = true end
+
     if ct.player_has and ct.vendor_has and ct.player_fits and ct.vendor_fits then
         ct.overall = true
     else
