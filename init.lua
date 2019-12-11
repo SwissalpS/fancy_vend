@@ -229,10 +229,8 @@ minetest.register_lbm({
     nodenames = {"fancy_vend:display_node"},
     run_at_every_load = true,
     action = function(pos, node)
-        if not next(minetest.get_objects_inside_radius(pos, 0.5)) then
-            pos.y = pos.y - 1
-            update_item(pos, node)
-        end
+		pos.y = pos.y - 1
+		update_item(pos, node)
     end
 })
 
