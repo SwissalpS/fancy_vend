@@ -1522,10 +1522,6 @@ minetest.register_tool("fancy_vend:copy_tool",{
         end
 
         if can_modify_vendor(pos, user) then
-            -- Admin vendor priv check
-            if not minetest.check_player_privs(node_meta:get_string("owner"), {admin_vendor=true}) and new_settings.admin_vendor == true then
-                settings.admin_vendor = false
-            end
 
             new_settings.input_item = current_settings.input_item
             new_settings.input_item_qty = current_settings.input_item_qty
