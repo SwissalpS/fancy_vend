@@ -175,3 +175,53 @@ function fancy_vend.inv_contains_items(inv, listname, itemstring, quantity, igno
     end
     return false
 end
+
+function fancy_vend.run_inv_checks(pos, player, lots)
+    local settings = fancy_vend.get_vendor_settings(pos)
+    local meta = minetest.get_meta(pos)
+    local inv = meta:get_inventory()
+    local player_inv = player:get_inventory()
+
+    local ct = {}
+
+    -- Get input and output quantities after multiplying by lot count
+    local output_qty = settings.output_item_qty * lots
+    local input_qty = settings.input_item_qty * lots
+
+    -- Perform inventory checks
+    ct.player_has, ct.player_item_table = fancy_vend.inv_contains_items(
+      player_inv, "main", settings.input_item, input_qty, settings.accept_worn_input
+    )
+    ct.vendor_has, ct.vendor_item_table = fancy_vend.inv_contains_items(
+      inv, "main", settings.output_item, output_qty, settings.accept_worn_output
+    )
+    ct.player_fits = fancy_vend.free_slots(player_inv, "main", settings.output_item, output_qty)
+    ct.vendor_fits = fancy_vend.free_slots(inv, "main", settings.input_item, input_qty)
+
+    if settings.admin_vendor then ct.vendor_has = true end
+
+    if ct.player_has and ct.vendor_has and ct.player_fits and ct.vendor_fits then
+        ct.overall = true
+    else
+        ct.overall = false
+    end
+
+    return ct
+end
+
+function fancy_vend.move_inv(frominv, toinv, filter)
+    for _, v in ipairs(frominv:get_list("main") or {}) do
+        if v:get_name() == filter or not filter then
+            if toinv:room_for_item("main", v) then
+                local leftover = toinv:add_item("main", v)
+
+                frominv:remove_item("main", v)
+
+                if leftover
+                and not leftover:is_empty() then
+                    frominv:add_item("main", v)
+                end
+            end
+        end
+    end
+end
