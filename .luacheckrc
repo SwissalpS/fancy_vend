@@ -1,6 +1,6 @@
 
 globals = {
-	"fancyvend",
+	"fancy_vend",
 	"minetest",
 	"mail"
 }
