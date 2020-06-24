@@ -63,6 +63,7 @@ function fancy_vend.update_item(pos, node)
         pos.y = pos.y + (12 / 16 + 0.11)
         tmp.nodename = node.name
         tmp.texture = ItemStack(meta:get_string("item")):get_name()
+		minetest.add_entity(pos, "fancy_vend:display_item")
         pos.y = pos.y - (12 / 16 + 0.11)
     end
 end
