@@ -262,7 +262,7 @@ minetest.register_node("fancy_vend:admin_depo", admin_depo)
 minetest.register_craft({
     output = "fancy_vend:player_vendor",
     recipe = {
-        { "default:gold_ingot", fancy_vend.isplay_node,          "default:gold_ingot"},
+        { "default:gold_ingot", fancy_vend.display_node,          "default:gold_ingot"},
         { "default:diamond",   "default:mese_crystal",        "default:diamond"},
         { "default:gold_ingot","default:chest_locked","default:gold_ingot"},
     }
