@@ -55,6 +55,7 @@ function fancy_vend.update_item(pos, node)
           minetest.get_node(pos).name.." at "..minetest.pos_to_string(pos)..
           " is not permitted, aborting"
         )
+		pos.y = pos.y - 1
         return
     end
     pos.y = pos.y - 1
