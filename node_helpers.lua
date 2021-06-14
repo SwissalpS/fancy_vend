@@ -53,18 +53,14 @@ function fancy_vend.refresh_vendor(pos)
     end
 
     if status then
-        local input_item = minetest.registered_items[settings.input_item]
-        local output_item = minetest.registered_items[settings.output_item]
+        local input_desc = fancy_vend.get_item_description(settings.input_item)
+        local output_desc = fancy_vend.get_item_description(settings.output_item)
 
-        if input_item and output_item then
-            meta:set_string("infotext", (settings.admin_vendor and "Admin" or "Player")..
-            " Vendor trading "..settings.input_item_qty.." "..
-            input_item.description..
-            " for "..settings.output_item_qty.." "..
-            output_item.description..
+        meta:set_string("infotext", (settings.admin_vendor and "Admin" or "Player")..
+			" Vendor trading "..settings.input_item_qty.." "..input_desc..
+            " for "..settings.output_item_qty.." "..output_desc..
             " (owned by " .. meta:get_string("owner") .. ")"
-            )
-        end
+        )
 
         if meta:get_string("configured") == "" then
             meta:set_string("configured", "true")

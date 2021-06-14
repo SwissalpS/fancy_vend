@@ -62,3 +62,12 @@ function fancy_vend.make_inactive_string(errorcode)
     end
     return status_str
 end
+
+function fancy_vend.get_item_description(itemname)
+	local desc = itemname
+	local def = minetest.registered_items[itemname]
+	if def and def.description ~= "" then
+		desc = def.description
+	end
+	return desc
+end

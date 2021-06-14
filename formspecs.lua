@@ -16,21 +16,14 @@ function fancy_vend.get_vendor_buyer_fs(pos, _, lots)
     local meta = minetest.get_meta(pos)
     local status, errorcode = fancy_vend.get_vendor_status(pos)
 
-    local input_item = minetest.registered_items[settings.input_item]
-    local output_item = minetest.registered_items[settings.output_item]
+    local input_desc = fancy_vend.get_item_description(settings.input_item)
+    local output_desc = fancy_vend.get_item_description(settings.output_item)
 
-    local itemstuff
-
-    if input_item and output_item then
-        itemstuff =
-            "item_image_button[0,0.4;1,1;"..settings.input_item..";ignore;]"..
-            "label[0.9,0.6;"..settings.input_item_qty.." "..input_item.description.."]"..
-            "item_image_button[0,1.7;1,1;"..settings.output_item..";ignore;]"..
-            "label[0.9,1.9;"..settings.output_item_qty.." "..output_item.description.."]"
-    else
-        return "size[8,9]"..
-            "label[0.9,0.6;Unknown items detected, vendor not fully functional!]"
-    end
+    local itemstuff =
+		"item_image_button[0,0.4;1,1;"..settings.input_item..";ignore;]"..
+		"label[0.9,0.6;"..settings.input_item_qty.." "..input_desc.."]"..
+		"item_image_button[0,1.7;1,1;"..settings.output_item..";ignore;]"..
+		"label[0.9,1.9;"..settings.output_item_qty.." "..output_desc.."]"
 
     local status_str
     if status then
