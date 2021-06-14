@@ -7,14 +7,12 @@ local tell_loaded = minetest.get_modpath("tell")
 local mail_loaded = minetest.get_modpath("mail")
 
 function fancy_vend.alert_owner_if_empty(pos)
-	if fancy_vend.no_alerts then
-		return
-	end
+	if fancy_vend.no_alerts then return end
 
 	local meta = minetest.get_meta(pos)
 	local settings = fancy_vend.get_vendor_settings(pos)
 	local owner = meta:get_string("owner")
-	local alerted = fancy_vend.stb(meta:get_string("alerted") or "false") -- check
+	local alerted = fancy_vend.stb(meta:get_string("alerted") or "false")
 	local status, errorcode = fancy_vend.get_vendor_status(pos)
 
 	-- Message to send
@@ -26,7 +24,6 @@ function fancy_vend.alert_owner_if_empty(pos)
 		" has just run out of stock."
 
 	if not alerted and not status and errorcode == "no_output" then
-		-- Rubenwardy's Email Mod: https://github.com/rubenwardy/email
 		if mail_loaded then
 			local inbox = {}
 
@@ -55,7 +52,6 @@ function fancy_vend.alert_owner_if_empty(pos)
 			if message then
 				-- Set the message as unread
 				message.unread = true
-
 				-- Append to the end
 				message.body = message.body..stock_msg.."\n"
 			else
@@ -70,27 +66,17 @@ function fancy_vend.alert_owner_if_empty(pos)
 			elseif mail.apiversion >= 1.1 then
 				-- webmail fork https://github.com/thomasrudin-mt/mail
 				mail.setMessages(owner, inbox)
-
 			end
 
-			meta:set_string("alerted", "true")
-
-			return
-
 		elseif email_loaded then
+			-- Rubenwardy's Email Mod: https://github.com/rubenwardy/email
 			email.send_mail("Fancy Vend", owner, stock_msg)
-
-			meta:set_string("alerted", "true")
-
-			return
 
 		elseif tell_loaded then
 			-- octacians tell mod https://github.com/octacian/tell
 			tell.add(owner, "Fancy Vend", stock_msg)
-
-			meta:set_string("alerted", "true")
-
-			return
 		end
+
+		meta:set_string("alerted", "true")
 	end
 end

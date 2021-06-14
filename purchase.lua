@@ -32,28 +32,29 @@ function fancy_vend.make_purchase(pos, player, lots)
 						" using vendor at "..minetest.pos_to_string(pos)
 					)
 
-					fancy_vend.inv_remove(player_inv, "main", ct.player_item_table, settings.input_item, input_qty)
-					fancy_vend.inv_insert(player_inv, "main", ItemStack(settings.output_item), output_qty, nil)
-
-					-- TODO: send proper message
-					--[[
-					if minetest.get_modpath("digilines") then
-						send_message(pos, settings.digiline_channel, msg)
-					end
-					--]]
+					fancy_vend.inv_remove(player_inv, "main",
+						ct.player_item_table, settings.input_item, input_qty
+					)
+					fancy_vend.inv_insert(player_inv, "main",
+						ItemStack(settings.output_item), output_qty, nil
+					)
 
 					return true, "Trade successful"
+
 				elseif ct.vendor_has then
 					if ct.vendor_fits then
-						minetest.log("action", player:get_player_name()..
-							" trades "..settings.input_item_qty.." "..
-							settings.input_item.." for "..settings.output_item_qty..
-							" "..settings.output_item.." using vendor at "..
-							minetest.pos_to_string(pos)
+						minetest.log("action", player:get_player_name().." trades "..
+							settings.input_item_qty.." "..settings.input_item.." for "..
+							settings.output_item_qty.." "..settings.output_item..
+							" using vendor at "..minetest.pos_to_string(pos)
 						)
 
-						fancy_vend.inv_remove(inv, "main", ct.vendor_item_table, settings.output_item, output_qty)
-						fancy_vend.inv_remove(player_inv, "main", ct.player_item_table, settings.input_item, input_qty)
+						fancy_vend.inv_remove(inv, "main",
+							ct.vendor_item_table, settings.output_item, output_qty
+						)
+						fancy_vend.inv_remove(player_inv, "main",
+							ct.player_item_table, settings.input_item, input_qty
+						)
 						fancy_vend.inv_insert(player_inv, "main",
 							ItemStack(settings.output_item), output_qty, ct.vendor_item_table
 						)

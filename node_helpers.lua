@@ -21,13 +21,13 @@ function fancy_vend.get_correct_vendor(settings)
 	end
 end
 
+local vendor_names = {
+	"fancy_vend:player_vendor",
+	"fancy_vend:player_depo",
+	"fancy_vend:admin_vendor",
+	"fancy_vend:admin_depo",
+}
 function fancy_vend.is_vendor(name)
-	local vendor_names = {
-		"fancy_vend:player_vendor",
-		"fancy_vend:player_depo",
-		"fancy_vend:admin_vendor",
-		"fancy_vend:admin_depo",
-	}
 	for _,n in ipairs(vendor_names) do
 		if name == n then
 			return true
@@ -35,7 +35,6 @@ function fancy_vend.is_vendor(name)
 	end
 	return false
 end
-
 
 function fancy_vend.refresh_vendor(pos)
 	local node = minetest.get_node(pos)
@@ -59,7 +58,7 @@ function fancy_vend.refresh_vendor(pos)
 		meta:set_string("infotext", (settings.admin_vendor and "Admin" or "Player")..
 			" Vendor trading "..settings.input_item_qty.." "..input_desc..
 			" for "..settings.output_item_qty.." "..output_desc..
-			" (owned by " .. meta:get_string("owner") .. ")"
+			" (owned by "..meta:get_string("owner")..")"
 		)
 
 		if meta:get_string("configured") == "" then
@@ -117,7 +116,7 @@ function fancy_vend.refresh_vendor(pos)
 		meta:set_string("infotext", "Inactive "..
 			(settings.admin_vendor and "Admin" or "Player")..
 			" Vendor"..fancy_vend.make_inactive_string(errorcode)..
-			" (owned by " .. meta:get_string("owner") .. ")"
+			" (owned by "..meta:get_string("owner")..")"
 		)
 		if meta:get_string("item") ~= "fancy_vend:inactive" then
 			meta:set_string("item", "fancy_vend:inactive")

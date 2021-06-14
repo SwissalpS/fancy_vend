@@ -7,6 +7,7 @@ display_node_def.drop = ""
 display_node_def.pointable = false
 display_node_def.groups.not_in_creative_inventory = 1
 display_node_def.description = "Fancy Vendor Display Node (you hacker you!)"
+
 if pipeworks then
 	display_node_def.digiline = {
 		wire = {

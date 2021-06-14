@@ -1,5 +1,4 @@
 
-
 -- Inventory helpers:
 
 -- Function to sort inventory (Taken from technic_chests)
@@ -33,7 +32,7 @@ end
 function fancy_vend.free_slots(inv, listname, itemname, quantity)
 	local size = inv:get_size(listname)
 	local free = 0
-	for i=1,size do
+	for i = 1,size do
 		local stack = inv:get_stack(listname, i)
 		if stack:is_empty() or stack:get_free_space() > 0 then
 			if stack:is_empty() then
@@ -43,11 +42,7 @@ function fancy_vend.free_slots(inv, listname, itemname, quantity)
 			end
 		end
 	end
-	if free < quantity then
-		return false
-	else
-		return true
-	end
+	return free > quantity
 end
 
 function fancy_vend.inv_insert(inv, listname, itemstack, quantity, from_table, pos, input_eject)
@@ -143,12 +138,12 @@ function fancy_vend.inv_contains_items(inv, listname, itemstring, quantity, igno
 	local get_items = {}
 	local count = 0
 
-	for i=1,inv:get_size(listname) do
+	for i = 1,inv:get_size(listname) do
 		local stack = inv:get_stack(listname, i)
 		if stack:get_name() == itemstring then
 			if ignore_wear or (not minetest.registered_tools[itemstring] or stack:get_wear() == 0) then
 				count = count + stack:get_count()
-				table.insert(get_items, {id=i, item=stack})
+				table.insert(get_items, {id = i, item = stack})
 				if count >= minimum then
 					return true, get_items
 				end

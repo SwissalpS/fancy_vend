@@ -25,16 +25,15 @@ function fancy_vend.get_vendor_buyer_fs(pos, _, lots)
 		"item_image_button[0,1.7;1,1;"..settings.output_item..";ignore;]"..
 		"label[0.9,1.9;"..settings.output_item_qty.." "..output_desc.."]"
 
-	local status_str
-	if status then
-		status_str = "active"
-	else
+	local status_str = "active"
+	if not status then
 		status_str = "inactive"..fancy_vend.make_inactive_string(errorcode)
 	end
+
 	local status_fs =
-	"label[4,0.4;Vendor status: "..status_str.."]"..
-	"label[4,0.8;Message: "..meta:get_string("message").."]"..
-	"label[4,0;Vendor owned by: "..meta:get_string("owner").."]"
+		"label[4,0.4;Vendor status: "..status_str.."]"..
+		"label[4,0.8;Message: "..meta:get_string("message").."]"..
+		"label[4,0;Vendor owned by: "..meta:get_string("owner").."]"
 
 	local setting_specific = ""
 	if not settings.accept_worn_input then
@@ -98,10 +97,10 @@ function fancy_vend.get_vendor_settings_fs(pos)
 
 	-- Admin vendor checkbox only if owner is admin
 	local meta = minetest.get_meta(pos)
-	if minetest.check_player_privs(meta:get_string("owner"), {admin_vendor=true}) or settings.admin_vendor then
+	if minetest.check_player_privs(meta:get_string("owner"), {admin_vendor = true}) or settings.admin_vendor then
 		checkboxes = checkboxes..
 			"checkbox[5,2.2;admin_vendor;Set vendor to an admin vendor.;"..
-				fancy_vend.bts(settings.admin_vendor).."]"
+			fancy_vend.bts(settings.admin_vendor).."]"
 	end
 
 
@@ -111,9 +110,9 @@ function fancy_vend.get_vendor_settings_fs(pos)
 			"checkbox[1,1.7;currency_eject;Eject incoming currency.;"..fancy_vend.bts(settings.currency_eject).."]"
 		if minetest.get_modpath("pipeworks") then
 			checkboxes = checkboxes..
-			"checkbox[5,1.3;accept_output_only;Accept for-sale item only.;"..
+				"checkbox[5,1.3;accept_output_only;Accept for-sale item only.;"..
 				fancy_vend.bts(settings.accept_output_only).."]"..
-			"checkbox[1,1.3;split_incoming_stacks;Split incoming stacks.;"..
+				"checkbox[1,1.3;split_incoming_stacks;Split incoming stacks.;"..
 				fancy_vend.bts(settings.split_incoming_stacks).."]"
 		end
 	end
@@ -150,14 +149,14 @@ function fancy_vend.get_vendor_default_fs(pos, player)
 	local settings_btn
 	if fancy_vend.can_modify_vendor(pos, player) then
 		settings_btn =
-		"image_button[0,1.3;1,1;debug_btn.png;button_settings;]"..
-		"item_image_button[0,2.3;1,1;default:book;button_log;]"..
-		"item_image_button[0,3.3;1,1;default:gold_ingot;button_buy;]"
+			"image_button[0,1.3;1,1;debug_btn.png;button_settings;]"..
+			"item_image_button[0,2.3;1,1;default:book;button_log;]"..
+			"item_image_button[0,3.3;1,1;default:gold_ingot;button_buy;]"
 	else
 		settings_btn =
-		"image[0,1.3;1,1;debug_btn.png]"..
-		"item_image[0,2.3;1,1;default:book]"..
-		"item_image[0,3.3;1,1;default:gold_ingot;button_buy;]"
+			"image[0,1.3;1,1;debug_btn.png]"..
+			"item_image[0,2.3;1,1;default:book]"..
+			"item_image[0,3.3;1,1;default:gold_ingot;button_buy;]"
 	end
 
 	local fs = base..inv_lists..settings_btn
@@ -183,7 +182,7 @@ function fancy_vend.get_vendor_log_fs(pos)
 		base = base.."item_image_button[0,0.3;1,1;default:chest;button_inv;]"
 	end
 
-	if not logs then logs = {"Error loading logs",} end
+	if not logs then logs = {"Error loading logs"} end
 	local logs_tl =
 		"textlist[1,0.5;7.8,8.6;logs;"..table.concat(logs, ",").."]"..
 		"label[1,0;Showing (up to "..fancy_vend.max_logs..") recent log entries:]"
@@ -193,8 +192,9 @@ function fancy_vend.get_vendor_log_fs(pos)
 end
 
 function fancy_vend.show_buyer_formspec(player, pos)
-	minetest.show_formspec(player:get_player_name(), "fancy_vend:buyer;"..
-		minetest.pos_to_string(pos), fancy_vend.get_vendor_buyer_fs(pos, player, nil)
+	minetest.show_formspec(player:get_player_name(),
+		"fancy_vend:buyer;"..minetest.pos_to_string(pos),
+		fancy_vend.get_vendor_buyer_fs(pos, player, nil)
 	)
 end
 
@@ -202,17 +202,16 @@ function fancy_vend.show_vendor_formspec(player, pos)
 	local settings = fancy_vend.get_vendor_settings(pos)
 	if fancy_vend.can_access_vendor_inv(player, pos) then
 		local status, errorcode = fancy_vend.get_vendor_status(pos)
-		if (
-			(not status and errorcode == "unconfigured")
-			and
-			fancy_vend.can_modify_vendor(pos, player)
-		) or settings.admin_vendor then
-			minetest.show_formspec(player:get_player_name(), "fancy_vend:settings;"..
-				minetest.pos_to_string(pos), fancy_vend.get_vendor_settings_fs(pos)
+		if ((not status and errorcode == "unconfigured")
+					and fancy_vend.can_modify_vendor(pos, player)) or settings.admin_vendor then
+			minetest.show_formspec(player:get_player_name(),
+				"fancy_vend:settings;"..minetest.pos_to_string(pos),
+				fancy_vend.get_vendor_settings_fs(pos)
 			)
 		else
-			minetest.show_formspec(player:get_player_name(), "fancy_vend:default;"..
-				minetest.pos_to_string(pos), fancy_vend.get_vendor_default_fs(pos, player)
+			minetest.show_formspec(player:get_player_name(),
+				"fancy_vend:default;"..minetest.pos_to_string(pos),
+				fancy_vend.get_vendor_default_fs(pos, player)
 			)
 		end
 	else

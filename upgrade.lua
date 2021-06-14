@@ -14,7 +14,7 @@ local base_upgrade_template = {
 	description = "Shop Upgrade (Try and place to upgrade)",
 	legacy_facedir_simple = true,
 	paramtype2 = "facedir",
-	groups = {choppy=2, oddly_breakable_by_hand=2, not_in_creative_inventory=1},
+	groups = {choppy = 2, oddly_breakable_by_hand = 2, not_in_creative_inventory = 1},
 	is_ground_content = false,
 	light_source = 8,
 	sounds = default.node_sound_wood_defaults(),
@@ -57,22 +57,21 @@ if old_vendor_mods_table["currency"] then
 			inv:is_empty("owner_wants") and
 			inv:is_empty("owner_gives") and
 			(meta:get_string("owner") == player:get_player_name() or
-			minetest.check_player_privs(player:get_player_name(), {protection_bypass=true})
-			)
+			minetest.check_player_privs(player:get_player_name(), {protection_bypass = true}))
 	end
 	currency_template.on_rightclick = function(pos, _, clicker)
 		local meta = minetest.get_meta(pos)
-		local list_name = "nodemeta:"..pos.x..','..pos.y..','..pos.z
+		local list_name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
 		if clicker:get_player_name() == meta:get_string("owner") then
 			minetest.show_formspec(clicker:get_player_name(),"fancy_vend:currency_shop_formspec",
 				"size[8,9.5]"..
-				"label[0,0;" .. "Customers gave:" .. "]"..
+				"label[0,0;".."Customers gave:".."]"..
 				"list["..list_name..";customers_gave;0,0.5;3,2;]"..
-				"label[0,2.5;" .. "Your stock:" .. "]"..
+				"label[0,2.5;".."Your stock:".."]"..
 				"list["..list_name..";stock;0,3;3,2;]"..
-				"label[5,0;" .. "You want:" .. "]"..
+				"label[5,0;".."You want:".."]"..
 				"list["..list_name..";owner_wants;5,0.5;3,2;]"..
-				"label[5,2.5;" .. "In exchange, you give:" .. "]"..
+				"label[5,2.5;".."In exchange, you give:".."]"..
 				"list["..list_name..";owner_gives;5,3;3,2;]"..
 				"list[current_player;main;0,5.5;8,4;]"
 			)
@@ -107,12 +106,11 @@ if old_vendor_mods_table["money"] then
 		local inv = meta:get_inventory()
 		return inv:is_empty("main") and
 			(meta:get_string("owner") == player:get_player_name() or
-			minetest.check_player_privs(player:get_player_name(), {protection_bypass=true})
-			)
+			minetest.check_player_privs(player:get_player_name(), {protection_bypass = true}))
 	end
 	money_template.on_rightclick = function(pos, _, clicker)
 		local meta = minetest.get_meta(pos)
-		local list_name = "nodemeta:"..pos.x..','..pos.y..','..pos.z
+		local list_name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
 		if clicker:get_player_name() == meta:get_string("owner") then
 			minetest.show_formspec(clicker:get_player_name(),"fancy_vend:money_shop_formspec",
 				"size[8,10;]"..

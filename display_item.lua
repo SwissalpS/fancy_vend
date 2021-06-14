@@ -1,7 +1,7 @@
 
 local tmp = {}
 
-minetest.register_entity("fancy_vend:display_item",{
+minetest.register_entity("fancy_vend:display_item", {
 	hp_max = 1,
 	visual = "wielditem",
 	visual_size = {x = 0.33, y = 0.33},
@@ -16,7 +16,7 @@ minetest.register_entity("fancy_vend:display_item",{
 			tmp.texture = nil
 		else
 			if staticdata ~= nil and staticdata ~= "" then
-				local data = staticdata:split(';')
+				local data = staticdata:split(";")
 				if data and data[1] and data[2] then
 					self.nodename = data[1]
 					self.texture = data[2]
@@ -30,7 +30,7 @@ minetest.register_entity("fancy_vend:display_item",{
 	end,
 	get_staticdata = function(self)
 		if self.nodename ~= nil and self.texture ~= nil then
-			return self.nodename .. ';' .. self.texture
+			return self.nodename..";"..self.texture
 		end
 		return ""
 	end,
@@ -51,7 +51,8 @@ function fancy_vend.update_item(pos, node)
 	pos.y = pos.y + 1
 	fancy_vend.remove_item(pos)
 	if minetest.get_node(pos).name ~= "fancy_vend:display_node" then
-		minetest.log("warning", "[fancy_vend]: Placing display item inside "..
+		minetest.log("warning",
+			"[fancy_vend]: Placing display item inside "..
 			minetest.get_node(pos).name.." at "..minetest.pos_to_string(pos)..
 			" is not permitted, aborting"
 		)

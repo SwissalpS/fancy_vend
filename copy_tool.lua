@@ -12,13 +12,11 @@ local function get_vendor_pos_and_settings(pointed_thing)
 		node = minetest.get_node(pos)
 	end
 	if not fancy_vend.is_vendor(node.name) then return false end
-
 	local settings = fancy_vend.get_vendor_settings(pos)
-
 	return pos, settings
 end
 
-minetest.register_tool("fancy_vend:copy_tool",{
+minetest.register_tool("fancy_vend:copy_tool", {
 	inventory_image = "copier.png",
 	description = "Geminio Wand (For copying vendor settings, right click to"..
 		"copy settings, left click to paste settings.)",
@@ -42,9 +40,8 @@ minetest.register_tool("fancy_vend:copy_tool",{
 		local node_meta = minetest.get_meta(pos)
 		local new_settings = minetest.deserialize(meta:get_string("settings"))
 		if not new_settings then
-			minetest.chat_send_player(
-			user:get_player_name(),
-			"No settings to set with. Right-click first on the vendor you want to copy settings from."
+			minetest.chat_send_player(user:get_player_name(),
+				"No settings to set with. Right-click first on the vendor you want to copy settings from."
 			)
 			return
 		end
@@ -57,14 +54,14 @@ minetest.register_tool("fancy_vend:copy_tool",{
 			new_settings.output_item_qty = current_settings.output_item_qty
 
 			-- Admin vendor priv check
-			if not minetest.check_player_privs(node_meta:get_string("owner"), {admin_vendor=true}) and
+			if not minetest.check_player_privs(node_meta:get_string("owner"), {admin_vendor = true}) and
 				new_settings.admin_vendor then
 				new_settings.admin_vendor = current_settings.admin_vendor
 			end
 
 			fancy_vend.set_vendor_settings(pos, new_settings)
 			fancy_vend.refresh_vendor(pos)
-			minetest.chat_send_player(user:get_player_name(), "Settings set.")
+			minetest.chat_send_player(user:get_player_name(), "Settings set at "..minetest.pos_to_string(pos)..".")
 		else
 			minetest.chat_send_player(user:get_player_name(), "You cannot modify this vendor.")
 		end

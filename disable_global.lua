@@ -1,9 +1,10 @@
 
-
 -- Craftitem to display when vendor is inactive (Use just image for this???)
-minetest.register_craftitem("fancy_vend:inactive",{inventory_image = "inactive.png",})
-
-
+minetest.register_craftitem("fancy_vend:inactive", {
+	description = "Fancy Vendor Inactive Item (you hacker you!)",
+	inventory_image = "inactive.png",
+	groups = {not_in_creative_inventory = 1},
+})
 
 local modstorage = minetest.get_mod_storage()
 
@@ -15,7 +16,7 @@ fancy_vend.all_inactive_force = fancy_vend.stb(modstorage:get_string("all_inacti
 
 minetest.register_chatcommand("disable_all_vendors", {
 	description = "Toggle vendor inactivity.",
-	privs = {disable_vendor=true},
+	privs = {disable_vendor = true},
 	func = function()
 		if fancy_vend.all_inactive_force then
 			fancy_vend.all_inactive_force = false

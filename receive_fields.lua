@@ -1,11 +1,11 @@
 
+local has_digilines = minetest.get_modpath("digilines")
+
 local function get_max_lots(pos, player)
 	local max = 0
-
 	while fancy_vend.run_inv_checks(pos, player, max).overall do
 		max = max + 1
 	end
-
 	return math.max(0, max -1)
 end
 
@@ -56,7 +56,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		end
 
 		-- Admin vendor priv check
-		if not minetest.check_player_privs(meta:get_string("owner"), {admin_vendor=true})
+		if not minetest.check_player_privs(meta:get_string("owner"), {admin_vendor = true})
 			and fields.admin_vendor == "true" then
 			settings.admin_vendor = false
 		end
@@ -93,7 +93,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			meta:set_string("log", minetest.serialize(logs))
 
 			-- Send digiline message if applicable
-			if minetest.get_modpath("digilines") then
+			if has_digilines then
 				local msg = {
 					buyer = player:get_player_name(),
 					lots = lots,
@@ -107,6 +107,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			meta:set_string("message", message)
 		end
 		fancy_vend.refresh_vendor(pos)
+
 	elseif fields.lot_fill then
 		minetest.show_formspec(
 			player:get_player_name(),
