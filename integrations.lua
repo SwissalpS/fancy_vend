@@ -16,10 +16,11 @@ function fancy_vend.alert_owner_if_empty(pos)
 	local status, errorcode = fancy_vend.get_vendor_status(pos)
 
 	-- Message to send
-	local stock_msg = "Your vendor trading "..settings.input_item_qty.." "..
-		minetest.registered_items[settings.input_item].description..
-		" for "..settings.output_item_qty.." "..
-		minetest.registered_items[settings.output_item].description..
+	local input_desc = fancy_vend.get_item_description(settings.input_item)
+	local output_desc = fancy_vend.get_item_description(settings.output_item)
+	local stock_msg = "Your vendor trading "..
+		settings.input_item_qty.." "..input_desc..
+		" for "..settings.output_item_qty.." "..output_desc..
 		" at position "..minetest.pos_to_string(pos, 0)..
 		" has just run out of stock."
 
