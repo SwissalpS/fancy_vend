@@ -62,10 +62,11 @@ end
 
 
 function fancy_vend.can_buy_from_vendor(pos, player)
+	local player_name = player:get_player_name()
 	local settings = fancy_vend.get_vendor_settings(pos)
-	local banned_buyers = string.split((settings.banned_buyers or ""), ",")
-	for i in pairs(banned_buyers) do
-		if banned_buyers[i] == player:get_player_name() then
+	local banned_buyers = string.split((settings.banned_buyers or ""), "[, ]+", false, nil, true)
+	for _, name in pairs(banned_buyers) do
+		if name == player_name then
 			return false
 		end
 	end
@@ -88,15 +89,16 @@ function fancy_vend.can_dig_vendor(pos, player)
 end
 
 function fancy_vend.can_access_vendor_inv(player, pos)
+	local player_name = player:get_player_name()
 	local meta = minetest.get_meta(pos)
 	if minetest.check_player_privs(player, {protection_bypass = true}) or
-		meta:get_string("owner") == player:get_player_name() then
+		meta:get_string("owner") == player_name then
 		return true
 	end
 	local settings = fancy_vend.get_vendor_settings(pos)
-	local co_sellers = string.split(settings.co_sellers,",")
-	for i in pairs(co_sellers) do
-		if co_sellers[i] == player:get_player_name() then
+	local co_sellers = string.split((settings.co_sellers or ""), "[, ]+", false, nil, true)
+	for _, name in pairs(co_sellers) do
+		if name == player_name then
 			return true
 		end
 	end
