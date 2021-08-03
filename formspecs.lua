@@ -156,7 +156,7 @@ function fancy_vend.get_vendor_default_fs(pos, player)
 		settings_btn =
 			"image[0,1.3;1,1;debug_btn.png]"..
 			"item_image[0,2.3;1,1;default:book]"..
-			"item_image[0,3.3;1,1;default:gold_ingot;button_buy;]"
+			"item_image_button[0,3.3;1,1;default:gold_ingot;button_buy;]"
 	end
 
 	local fs = base..inv_lists..settings_btn
