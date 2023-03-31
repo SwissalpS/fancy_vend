@@ -4,7 +4,7 @@
 -- This function takes the position of a vendor and alerts the owner if it has just been emptied
 local email_loaded = minetest.get_modpath("email")
 local tell_loaded = minetest.get_modpath("tell")
-local mail_loaded = minetest.get_modpath("mail")
+local mail_loaded = minetest.get_modpath("mail") and mail.version == 3 -- recent version only (at this time)
 
 function fancy_vend.alert_owner_if_empty(pos)
 	if fancy_vend.no_alerts then return end
@@ -26,47 +26,35 @@ function fancy_vend.alert_owner_if_empty(pos)
 
 	if not alerted and not status and errorcode == "no_output" then
 		if mail_loaded then
-			local inbox = {}
-
-			-- load messages
-			if not mail.apiversion then
-				-- cheapie's mail mod https://cheapiesystems.com/git/mail/
-				if not mail.messages[owner] then mail.messages[owner] = {} end
-				inbox = mail.messages[owner]
-
-			elseif mail.apiversion >= 1.1 then
-				-- webmail fork https://github.com/thomasrudin-mt/mail (per player storage)
-				inbox = mail.getMessages(owner)
-
-			end
+			local entry = mail.get_storage_entry(owner)
 
 			-- Instead of filling their inbox with mail, get the last message sent by "Fancy Vend"
 			-- and append to the message
 			-- If there is no last message, then create a new one
 			local message
-			for _, msg in pairs(inbox) do
-				if msg.sender == "Fancy Vend" then -- Put a space in the name to avoid impersonation
+			for _, msg in pairs(entry.inbox) do
+				if msg.from == "Fancy Vend" then -- Put a space in the name to avoid impersonation
 					message = msg
 				end
 			end
 
 			if message then
+				-- edit existing message and save
 				-- Set the message as unread
-				message.unread = true
+				message.read = false
 				-- Append to the end
 				message.body = message.body..stock_msg.."\n"
+				-- save messages
+				mail.set_storage_entry(owner, entry)
+
 			else
-				mail.send("Fancy Vend", owner, "You have unstocked vendors!", stock_msg.."\n")
-			end
-
-			-- save messages
-			if not mail.apiversion then
-				-- cheapie's mail mod https://cheapiesystems.com/git/mail/
-				mail.save()
-
-			elseif mail.apiversion >= 1.1 then
-				-- webmail fork https://github.com/thomasrudin-mt/mail
-				mail.setMessages(owner, inbox)
+				-- send a new message
+				mail.send({
+					from = "Fancy Vend",
+					to = owner,
+					subject = "You have unstocked vendors!",
+					body = stock_msg.."\n"
+				})
 			end
 
 		elseif email_loaded then
